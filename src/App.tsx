@@ -77,7 +77,7 @@ export const App: React.FC = () => {
               <Mail className="w-5 h-5" />
             </a>
             <a
-              href="https://github.com/emmabostian/developer-portfolios?tab=readme-ov-file"
+              href="https://github.com/Shashank22-jpg"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub"
