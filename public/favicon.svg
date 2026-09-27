@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#18011F"/>
+      <stop offset="50%" stop-color="#0C0C0C"/>
+      <stop offset="100%" stop-color="#080808"/>
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#B600A8"/>
+      <stop offset="50%" stop-color="#7621B0"/>
+      <stop offset="100%" stop-color="#BBCCD7"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+
+  <!-- Background Circle -->
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)"/>
+  <rect x="8" y="8" width="496" height="496" rx="120" fill="none" stroke="url(#accentGrad)" stroke-width="8" opacity="0.6"/>
+
+  <!-- 3D Geodesic Cube Outline -->
+  <g filter="url(#glow)">
+    <!-- Top Face -->
+    <polygon points="256,96 384,160 256,224 128,160" fill="none" stroke="url(#accentGrad)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Left Face -->
+    <polygon points="128,160 256,224 256,368 128,304" fill="none" stroke="url(#accentGrad)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+    <!-- Right Face -->
+    <polygon points="384,160 256,224 256,368 384,304" fill="none" stroke="url(#accentGrad)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>
+  </g>
+
+  <!-- Stylized Monogram S Centerpiece -->
+  <text x="256" y="320" font-family="'Kanit', sans-serif" font-size="220" font-weight="900" fill="#D7E2EA" text-anchor="middle" filter="url(#glow)" letter-spacing="-5">
+    S
+  </text>
+</svg>
