@@ -2,7 +2,6 @@ import React from 'react';
 import { Global3DCanvas } from './components/Global3DCanvas';
 import { GlobalCursorGlow } from './components/GlobalCursorGlow';
 import { HeroSection } from './components/HeroSection';
-import { MarqueeSection } from './components/MarqueeSection';
 import { AboutSection } from './components/AboutSection';
 import { SkillsSection } from './components/SkillsSection';
 import { ProjectsSection } from './components/ProjectsSection';
@@ -34,10 +33,7 @@ export const App: React.FC = () => {
       {/* 1. HERO SECTION */}
       <HeroSection onNavigate={handleNavigate} />
 
-      {/* 2. MARQUEE SECTION */}
-      <MarqueeSection />
-
-      {/* 3. ABOUT SECTION */}
+      {/* 2. ABOUT SECTION */}
       <AboutSection />
 
       {/* 4. SKILLS SECTION */}
