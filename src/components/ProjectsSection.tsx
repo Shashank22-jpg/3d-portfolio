@@ -2,36 +2,13 @@ import React, { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, MotionValue } from 'framer-motion';
 import { FadeIn } from './FadeIn';
 import { LiveProjectButton } from './LiveProjectButton';
-import { Github } from 'lucide-react';
-
-interface ProjectData {
-  id: string;
-  number: string;
-  category: string;
-  title: string;
-  col1Img1: string;
-  col1Img2: string;
-  col2Img: string;
-  liveUrl?: string;
-  githubUrl?: string;
-}
-
-const PROJECTS: ProjectData[] = [
-  {
-    id: 'proj-1',
-    number: '01',
-    category: 'Full Stack & AI Platform',
-    title: 'AI Travel Budget Planner',
-    col1Img1: '/projects/ai-travel-budget-planner.png',
-    col1Img2: '/projects/ai-travel-budget-planner.png',
-    col2Img: '/projects/ai-travel-budget-planner.png',
-    liveUrl: 'https://ai-travel-budget-planner.vercel.app/',
-    githubUrl: 'https://github.com/Shashank22-jpg/AI-Travel-Budget-Planner',
-  },
-];
+import { ProjectDetailsModal } from './ProjectDetailsModal';
+import { Github, Sparkles } from 'lucide-react';
+import { PROJECTS, ProjectData } from '../data/projectsData';
 
 export const ProjectsSection: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -65,10 +42,18 @@ export const ProjectsSection: React.FC = () => {
               project={project}
               progress={scrollYProgress}
               targetScale={targetScale}
+              onOpenDetails={(p) => setSelectedProject(p)}
             />
           );
         })}
       </div>
+
+      {/* Expandable Project Details Modal */}
+      <ProjectDetailsModal
+        project={selectedProject}
+        isOpen={!!selectedProject}
+        onClose={() => setSelectedProject(null)}
+      />
     </section>
   );
 };
@@ -79,6 +64,7 @@ interface CardProps {
   project: ProjectData;
   progress: MotionValue<number>;
   targetScale: number;
+  onOpenDetails: (project: ProjectData) => void;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -87,6 +73,7 @@ const Card: React.FC<CardProps> = ({
   project,
   progress,
   targetScale,
+  onOpenDetails,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotate, setRotate] = useState({ x: 0, y: 0 });
@@ -127,7 +114,7 @@ const Card: React.FC<CardProps> = ({
       onMouseMove={handleMouseMove}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="sticky top-24 md:top-32 h-auto min-h-[80vh] md:h-[85vh] w-full max-w-6xl flex items-center justify-center mb-12 sm:mb-20"
+      className="sticky top-24 md:top-32 h-auto min-h-[82vh] md:min-h-[88vh] w-full max-w-6xl flex items-center justify-center mb-12 sm:mb-20"
       style={{ top: `calc(6rem + ${topOffset}px)` }}
     >
       <motion.div
@@ -151,7 +138,7 @@ const Card: React.FC<CardProps> = ({
         {/* Top Row: Number, Category, Project Name, Action Buttons with 3D depth */}
         <div
           style={{ transform: 'translateZ(30px)' }}
-          className="flex flex-wrap items-center justify-between gap-4 mb-6 sm:mb-8 pb-4 border-b border-[#D7E2EA]/20 relative z-20"
+          className="flex flex-wrap items-center justify-between gap-4 mb-4 sm:mb-6 pb-4 border-b border-[#D7E2EA]/20 relative z-20"
         >
           <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
             <span
@@ -161,22 +148,44 @@ const Card: React.FC<CardProps> = ({
               {project.number}
             </span>
             <div className="flex flex-col">
-              <span className="text-[#D7E2EA]/70 font-medium uppercase tracking-widest text-xs sm:text-sm">
-                {project.category}
-              </span>
+              <div className="flex items-center gap-2 flex-wrap mb-1">
+                {project.featured && (
+                  <span className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-gradient-to-r from-[#B600A8]/30 to-[#7621B0]/30 border border-[#B600A8]/60 text-[#D7E2EA] shadow-[0_0_12px_rgba(182,0,168,0.35)]">
+                    <Sparkles className="w-3.5 h-3.5 text-[#B600A8]" />
+                    Featured Project
+                  </span>
+                )}
+                <span className="text-[#D7E2EA]/70 font-medium uppercase tracking-widest text-xs sm:text-sm">
+                  {project.category}
+                </span>
+              </div>
               <h3 className="text-[#D7E2EA] font-medium uppercase tracking-wide text-xl sm:text-2xl md:text-3xl lg:text-4xl">
                 {project.title}
               </h3>
+              {project.tagline && (
+                <p className="text-xs sm:text-sm text-[#BBCCD7]/80 font-light italic mt-0.5">
+                  {project.tagline}
+                </p>
+              )}
             </div>
           </div>
 
-          <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            {project.details && (
+              <button
+                type="button"
+                onClick={() => onOpenDetails(project)}
+                className="inline-flex items-center gap-2 rounded-full border-2 border-[#B600A8] bg-[#18011F]/70 text-[#D7E2EA] font-medium uppercase tracking-widest px-5 py-3 text-xs sm:text-sm hover:bg-[#B600A8]/30 hover:scale-105 transition-all cursor-pointer shadow-[0_0_15px_rgba(182,0,168,0.25)]"
+              >
+                <Sparkles className="w-4 h-4 text-[#B600A8]" /> Details
+              </button>
+            )}
             {project.githubUrl && (
               <a
                 href={project.githubUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-6 py-3 text-sm hover:bg-[#D7E2EA]/10 hover:scale-105 transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 rounded-full border-2 border-[#D7E2EA] text-[#D7E2EA] font-medium uppercase tracking-widest px-5 py-3 text-xs sm:text-sm hover:bg-[#D7E2EA]/10 hover:scale-105 transition-all cursor-pointer"
               >
                 <Github className="w-4 h-4" /> GitHub
               </a>
@@ -187,22 +196,40 @@ const Card: React.FC<CardProps> = ({
           </div>
         </div>
 
+        {/* Technology Badges */}
+        {project.technologies && project.technologies.length > 0 && (
+          <div
+            style={{ transform: 'translateZ(35px)' }}
+            className="flex flex-wrap items-center gap-2 mb-4 sm:mb-6 relative z-20"
+          >
+            {project.technologies.map((tech) => (
+              <span
+                key={tech}
+                className="px-3 py-1 text-xs font-medium rounded-full bg-[#121316]/80 border border-[#D7E2EA]/20 text-[#D7E2EA]/90 hover:border-[#B600A8]/80 hover:text-[#D7E2EA] transition-all duration-200"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+        )}
+
         {/* Bottom Row: 2-Column Image Grid with 3D Depth Shift */}
         <div
           style={{ transform: 'translateZ(40px)' }}
-          className="grid grid-cols-1 md:grid-cols-10 gap-4 sm:gap-6 flex-grow items-stretch relative z-20"
+          className="grid grid-cols-1 md:grid-cols-10 gap-4 sm:gap-6 flex-grow items-stretch relative z-20 min-h-[260px] sm:min-h-[320px]"
         >
           {/* Left Column (40% width): 2 Stacked Images */}
           <div className="md:col-span-4 flex flex-col gap-4 sm:gap-6 justify-between h-full">
             {/* Top Left Image */}
             <div
               style={{ height: 'clamp(130px, 16vw, 230px)' }}
-              className="w-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] shadow-lg border border-[#D7E2EA]/20"
+              className="w-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] shadow-lg border border-[#D7E2EA]/20 group/img cursor-pointer relative"
+              onClick={() => project.details && onOpenDetails(project)}
             >
               <img
                 src={project.col1Img1}
                 alt={`${project.title} Preview 1`}
-                className="w-full h-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] hover:scale-105 transition-transform duration-500"
+                className="w-full h-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] group-hover/img:scale-105 transition-transform duration-500"
                 loading="lazy"
               />
             </div>
@@ -210,23 +237,27 @@ const Card: React.FC<CardProps> = ({
             {/* Bottom Left Image */}
             <div
               style={{ height: 'clamp(160px, 22vw, 340px)' }}
-              className="w-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] shadow-lg border border-[#D7E2EA]/20"
+              className="w-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] shadow-lg border border-[#D7E2EA]/20 group/img cursor-pointer relative"
+              onClick={() => project.details && onOpenDetails(project)}
             >
               <img
                 src={project.col1Img2}
                 alt={`${project.title} Preview 2`}
-                className="w-full h-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] hover:scale-105 transition-transform duration-500"
+                className="w-full h-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] group-hover/img:scale-105 transition-transform duration-500"
                 loading="lazy"
               />
             </div>
           </div>
 
           {/* Right Column (60% width): 1 Tall Image */}
-          <div className="md:col-span-6 h-[280px] md:h-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] shadow-lg border border-[#D7E2EA]/20">
+          <div
+            className="md:col-span-6 h-[260px] md:h-full rounded-[40px] sm:rounded-[50px] md:rounded-[60px] overflow-hidden bg-[#181818] shadow-lg border border-[#D7E2EA]/20 group/img cursor-pointer relative"
+            onClick={() => project.details && onOpenDetails(project)}
+          >
             <img
               src={project.col2Img}
               alt={`${project.title} Main Feature`}
-              className="w-full h-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] hover:scale-105 transition-transform duration-500"
+              className="w-full h-full object-cover rounded-[40px] sm:rounded-[50px] md:rounded-[60px] group-hover/img:scale-105 transition-transform duration-500"
               loading="lazy"
             />
           </div>
